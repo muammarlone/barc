@@ -5,10 +5,12 @@ from pydantic import BaseModel
 
 class Finding(BaseModel):
     requirement_id: str
+    sub_task: str # e.g. "Bandwidth", "Security", "Redundancy"
     status: str # "PASS" or "FAIL"
     evidence_snippet: str
     reasoning: str
     severity: str
+    hard_constraint: bool = False # If True, failure blocks the gate automatically
 
 class BaseDSA(ABC):
     """
@@ -39,15 +41,18 @@ class BaseDSA(ABC):
 # Specialist Implementation for Network
 class NetworkDSA(BaseDSA):
     async def analyze(self, evidence_data: str) -> List[Finding]:
-        # In a real implementation, this would involve LLM reasoning
-        # For the skeleton, we return a mock finding based on requirements
         findings = []
         for req in self.get_requirements():
+            # Hard constraint logic: NW-REQ-01 is mandatory
+            is_hard = (req["id"] == "NW-REQ-01")
+            
             findings.append(Finding(
                 requirement_id=req["id"],
+                sub_task=req.get("category", "General"),
                 status="PASS",
                 evidence_snippet="Simulated evidence for " + req["title"],
                 reasoning="Evidence matches standard benchmarks.",
-                severity=req["severity"]
+                severity=req["severity"],
+                hard_constraint=is_hard
             ))
         return findings

@@ -111,6 +111,33 @@
             margin-bottom: 3rem;
         }
 
+        .tenant-selector {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--surface-border);
+            border-radius: 8px;
+        }
+
+        .tenant-selector label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .tenant-selector select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
         h1 {
             font-family: 'Outfit', sans-serif;
             font-size: 2.2rem;
@@ -543,6 +570,14 @@
             <div class="logo-icon">B</div>
             BARC / KIW
         </div>
+        <div class="tenant-selector">
+            <label>Active Enterprise Tenant</label>
+            <select>
+                <option>Global-Connect Inc.</option>
+                <option>Euro-Logic Systems</option>
+                <option>APAC-Growth Partners</option>
+            </select>
+        </div>
         <nav>
             <ul>
                 <li class="active">Infrastructure Dashboard</li>
@@ -624,17 +659,17 @@
 
         <div style="margin-bottom: 2rem;">
             <h3 style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 1rem;">
-                Active Orchestration Workflow: <strong>Standard Onboarding v2.0</strong></h3>
+                Durable Orchestration (Temporal): <strong>BPO_Onboarding_Workflow</strong></h3>
             <div class="workflow-visual">
-                <div class="wf-node complete">Ingestion [In]</div>
+                <div class="wf-node complete">Security/ZTA</div>
                 <div class="wf-arrow">→</div>
-                <div class="wf-node complete">DSA-Network</div>
+                <div class="wf-node complete">Ingestion</div>
                 <div class="wf-arrow">→</div>
-                <div class="wf-node active">DMAIC-Gate (Analyze)</div>
+                <div class="wf-node active">DSA-Analysis</div>
                 <div class="wf-arrow">→</div>
-                <div class="wf-node waiting">PMO-Clearance</div>
+                <div class="wf-node waiting">PMO-Gate</div>
                 <div class="wf-arrow">→</div>
-                <div class="wf-node waiting">BPO-Delivery [Out]</div>
+                <div class="wf-node waiting">Reporting</div>
             </div>
         </div>
 

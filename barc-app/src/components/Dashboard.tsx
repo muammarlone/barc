@@ -7,25 +7,42 @@ interface Metrics {
     readiness_forecast: string;
 }
 
+interface SecurityKPIs {
+    mttd_sec: number;
+    mttr_sec: number;
+    total_violations: number;
+    compliance_score: number;
+}
+
 const Dashboard: React.FC = () => {
     const [metrics, setMetrics] = useState<Metrics | null>(null);
+    const [security, setSecurity] = useState<SecurityKPIs | null>(null);
+    const [workflowStatus, setWorkflowStatus] = useState<string>("IDLE");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchMetrics = async () => {
+        const fetchAll = async () => {
             const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8003';
             try {
-                const response = await axios.get(`${backendUrl}/metrics?findings_count=12&critical_gaps=1`);
-                setMetrics(response.data);
+                const [mRes, sRes] = await Promise.all([
+                    axios.get(`${backendUrl}/metrics?findings_count=12&critical_gaps=1`),
+                    axios.get(`${backendUrl}/security/kpis`)
+                ]);
+                setMetrics(mRes.data);
+                setSecurity(sRes.data);
+                setWorkflowStatus("PIPELINE_EXPLORE"); // Simulated current live status
                 setLoading(false);
+                setError(null);
             } catch (err) {
-                console.error("Failed to fetch metrics", err);
-                setError("Connectivity issue with Governance Engine.");
+                console.error("Stability Check Failed", err);
+                setError("Network Instability: Governance Engine Heartbeat Lost.");
                 setLoading(false);
             }
         };
-        fetchMetrics();
+        fetchAll();
+        const interval = setInterval(fetchAll, 5000); // Pulse for stability
+        return () => clearInterval(interval);
     }, []);
 
 
@@ -79,12 +96,32 @@ const Dashboard: React.FC = () => {
                     <div className="sub">Velocity: {metrics?.performance_velocity} PV</div>
                 </div>
 
-                <div className="card">
-                    <h3>Integrity Center</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.5rem' }}>
-                        <div className="integrity-badge badge-zt">ZT: VERIFIED</div>
-                        <div className="integrity-badge badge-ethical">ETHICS: 100%</div>
+                <div className="card" style={{ borderTop: '2px solid #a855f7' }}>
+                    <h3>Security KPIs</h3>
+                    <div style={{ marginTop: '0.5rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>MTTD / MTTR</div>
+                        <div className="value" style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>
+                            {loading ? "..." : `${security?.mttd_sec}s / ${security?.mttr_sec}s`}
+                        </div>
+                        <div className="peak-badge" style={{ marginTop: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)' }}>
+                            Score: {security?.compliance_score ? security.compliance_score * 100 : 0}%
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '0.8rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '1rem' }}>
+                    Temporal Status: <span style={{ color: 'var(--accent)' }}>{workflowStatus}</span>
+                </h3>
+                <div className="workflow-visual">
+                    <div className="wf-node complete">Security</div>
+                    <div className="wf-arrow">→</div>
+                    <div className="wf-node complete">Ingestion</div>
+                    <div className="wf-arrow">→</div>
+                    <div className={`wf-node ${workflowStatus === 'PIPELINE_EXPLORE' ? 'active' : 'waiting'}`}>DSA-Explore</div>
+                    <div className="wf-arrow">→</div>
+                    <div className="wf-node waiting">PMO-Gate</div>
                 </div>
             </div>
 

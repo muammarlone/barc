@@ -1,0 +1,24 @@
+{
+    "domain": "Cloud Infrastructure",
+    "version": "1.0.0",
+    "requirements": [
+        {
+            "id": "CLD-001",
+            "title": "Data Residency Compliance",
+            "description": "BPO must prove data remains within the target sovereign region.",
+            "severity": "CRITICAL"
+        },
+        {
+            "id": "CLD-002",
+            "title": "Serverless Scaling Guardrails",
+            "description": "Resource quotas must be set to prevent runaway costs/DoS.",
+            "severity": "MEDIUM"
+        },
+        {
+            "id": "CLD-003",
+            "title": "Encryption at Rest (KMS)",
+            "description": "All cloud storage buckets must use customer-managed keys.",
+            "severity": "HIGH"
+        }
+    ]
+}

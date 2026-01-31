@@ -1,0 +1,24 @@
+{
+    "domain": "Cybersecurity",
+    "version": "1.0.0",
+    "requirements": [
+        {
+            "id": "SEC-001",
+            "title": "Multi-Factor Authentication (MFA)",
+            "description": "Global enforces MFA for all BPO-side administrative access.",
+            "severity": "CRITICAL"
+        },
+        {
+            "id": "SEC-002",
+            "title": "Vulnerability Scanning Frequency",
+            "description": "Automated scans must run every 24 hours on all public endpoints.",
+            "severity": "HIGH"
+        },
+        {
+            "id": "SEC-003",
+            "title": "Incident Response Plan (IRP) Activation",
+            "description": "BPO must demonstrate a tested IRP within the last quarter.",
+            "severity": "CRITICAL"
+        }
+    ]
+}

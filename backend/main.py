@@ -1,7 +1,11 @@
 import logging
+import uuid
+import asyncio
+
 from fastapi import FastAPI, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Dict
+from typing import List, Dict, Any
+
 
 # Core Agents
 from agents.dsa_framework import NetworkDSA
@@ -54,8 +58,11 @@ gate = PMOGate()
 zta = ZTAEngine()
 ethics = EthicsManager()
 lab = SpecialtyLab()
+from agents.security_guard import AISecurityGuard, SecurityEventTracker
 factory = AssetFactory()
 dsa_breaker = CircuitBreaker(failure_threshold=2, recovery_timeout=10)
+security_tracker = SecurityEventTracker()
+security = AISecurityGuard(tracker=security_tracker)
 
 # Chaos State
 chaos_active = False
@@ -158,8 +165,10 @@ async def approve_artifact(artifact_id: str, status: GateStatus, user_id: str):
     return gate.transition_status(artifact_id, status, user_id)
 
 @app.post("/path", response_model=PathRecommendation, tags=["Intelligence"])
-async def get_optimal_path(complexity: str, urgency: str):
-    return OPME.determine_optimal_path(complexity, urgency)
+async def get_optimal_path(complexity: str, urgency: str, tenant_id: str = "GLOBAL"):
+    # Simulated historical fail rate lookup
+    hist_fail = 0.08 if tenant_id == "APAC-Growth partners" else 0.04
+    return OPME.determine_optimal_path(complexity, urgency, historical_fail_rate=hist_fail)
 
 @app.post("/lab/dive", response_model=List[LabFinding], tags=["Specialty"])
 async def specialty_deep_dive(domain: str, context: str):
@@ -172,17 +181,45 @@ async def generate_fs_asset(bpo_name: str, findings: List[Dict]):
     return factory.generate_fs_spec(bpo_name, findings)
 
 @app.get("/metrics", response_model=QualityMetrics, tags=["Intelligence"])
-async def get_metrics(findings_count: int = 10, critical_gaps: int = 2):
-    return OPME.calculate_metrics(findings_count, critical_gaps)
+async def get_metrics(findings_count: int = 10, critical_gaps: int = 2, assessment_days: int = 5):
+    return OPME.calculate_metrics(findings_count, critical_gaps, assessment_duration_days=assessment_days)
+
+@app.get("/governance/raci/{tenant_id}", tags=["Governance"])
+async def get_raci_for_tenant(tenant_id: str, complexity: str = "MEDIUM", risk: float = 0.1):
+    from agents.governance import DRE
+    dre = DRE()
+    return dre.get_raci_matrix(tenant_id, complexity, risk)
+
+@app.get("/security/kpis", tags=["Security"])
+async def get_security_kpis():
+    """Returns AI Security Gold Standard metrics."""
+    return security_tracker.get_kpis()
 
 # --- Temporal Phase 2 Endpoints ---
 
 @app.post("/temporal/start", tags=["Temporal Phase 2"])
-async def start_durable_assessment(submission: EvidenceSubmission):
-    """Starts a durable, Temporal-managed assessment workflow."""
-    logger.info(f"Starting Durable Assessment for BPO: {submission.bpo_id}")
-    wf_id = await bpo_onboarding_workflow(submission.bpo_id, submission.domain, submission.content)
-    return {"workflow_id": wf_id, "status": "DURABLE_ORCHESTRATION_STARTED"}
+async def start_durable_assessment(submission: EvidenceSubmission, x_tenant_id: str = Header("DEFAULT")):
+    """Starts a durable, Temporal-managed assessment workflow in the background."""
+    logger.info(f"Starting Durable Assessment for BPO: {submission.bpo_id} (Tenant: {x_tenant_id})")
+    
+    # Pre-generate workflow ID so we can return it immediately
+    wf_id = f"WF-{uuid.uuid4().hex[:6].upper()}"
+    
+    # Trigger the workflow in the background (Autonomous Durable Orchestration)
+    asyncio.create_task(
+        bpo_onboarding_workflow(submission.bpo_id, submission.domain, submission.content, x_tenant_id, wf_id=wf_id)
+    )
+    
+    return {"workflow_id": wf_id, "status": "DURABLE_ORCHESTRATION_STARTED", "tenant": x_tenant_id}
+
+
+
+@app.post("/temporal/signal/{workflow_id}", tags=["Temporal Phase 2"])
+async def send_signal(workflow_id: str, signal_name: str, data: Dict[str, Any]):
+    """Sends a signal to a running workflow (e.g. approving a gate)."""
+    logger.info(f"Signaling Workflow {workflow_id} with {signal_name}")
+    temporal.signal_workflow(workflow_id, signal_name, data)
+    return {"status": "SIGNAL_DELIVERED"}
 
 @app.get("/temporal/status/{workflow_id}", tags=["Temporal Phase 2"])
 async def get_workflow_status(workflow_id: str):
@@ -190,7 +227,17 @@ async def get_workflow_status(workflow_id: str):
     status = temporal.get_status(workflow_id)
     if not status["workflow"]:
         raise HTTPException(status_code=404, detail="WORKFLOW_NOT_FOUND")
+    
+    # Add progress query if available
+    status["progress"] = temporal.query_workflow(workflow_id, "progress")
     return status
+
+@app.get("/temporal/tenant/{tenant_id}", tags=["Temporal Phase 2"])
+async def get_tenant_workflows(tenant_id: str):
+    """List all workflows for a specific tenant (Multi-tenant view)."""
+    wf_ids = temporal.tenants.get(tenant_id, [])
+    return {"tenant_id": tenant_id, "workflows": wf_ids, "count": len(wf_ids)}
+
 
 
 if __name__ == "__main__":
