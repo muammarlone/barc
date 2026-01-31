@@ -57,6 +57,24 @@ decision_log:
     status: APPROVED
     audit_link: "gados-project/log/reports/HARDENING-200-REPORT.md"
 
+  - id: 8
+    decision_id: DECISION-TEMPORAL-ORCH-001
+    timestamp: "2026-01-30T22:30:00Z"
+    subject: "Adoption of Temporal for Durable Orchestration"
+    authority: "KIW Governance Board"
+    status: PENDING_REVIEW
+    audit_link: "gados-project/decision/DECISION-TEMPORAL-ORCH-001.md"
+
+  - id: 9
+    decision_id: DECISION-PHASE2-GAMEPLAN
+    timestamp: "2026-01-30T22:35:00Z"
+    subject: "Approval of Phase 2 Strategic Game Plan"
+    authority: "KIW Governance Board"
+    status: APPROVED
+    audit_link: "STRATEGIC_GAME_PLAN.md"
+
+
+
 
 
 
