@@ -1,22 +1,68 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 from agents.dsa_framework import NetworkDSA, Finding
 from agents.path_engine import OPME, PathRecommendation, QualityMetrics
+
 from agents.thinking_agent import ThinkingAgent, Critique
+from agents.sensory_hub import SensoryHub, IngestedArtifact
+from agents.csa_engine import CSA, Report
+from agents.pmo_gate import PMOGate, GateLog, GateStatus
+
+
 
 
 
 app = FastAPI(title="BARC Backend - GADOS Powered")
+hub = SensoryHub(storage_path="evidence/")
+csa = CSA()
+gate = PMOGate()
 
 class EvidenceSubmission(BaseModel):
+
+
     bpo_id: str
     domain: str
     content: str
 
+class DMSRequest(BaseModel):
+    provider: str
+    filename: str
+    content: str
+
+class EmailRequest(BaseModel):
+    sender: str
+    subject: str
+    content: str
+
+class ReportRequest(BaseModel):
+    findings: List[Dict]
+    bpo_name: str
+
+
+
 @app.get("/")
 async def root():
     return {"status": "BARC Governance Engine Active", "version": "1.0.0"}
+
+@app.post("/ingest/dms", response_model=IngestedArtifact)
+async def ingest_dms(req: DMSRequest):
+    return hub.ingest_from_dms(req.provider, req.filename, req.content)
+
+@app.post("/ingest/email", response_model=IngestedArtifact)
+async def ingest_email(req: EmailRequest):
+    return hub.ingest_from_email(req.sender, req.subject, req.content)
+
+
+
+@app.post("/report", response_model=Report)
+async def generate_report(req: ReportRequest):
+    return csa.synthesize_technical_to_executive(req.findings, req.bpo_name)
+
+
+@app.post("/gate/approve", response_model=GateLog)
+async def approve_artifact(artifact_id: str, status: GateStatus, user_id: str):
+    return gate.transition_status(artifact_id, status, user_id)
 
 @app.post("/analyze")
 async def analyze_evidence(submission: EvidenceSubmission):
@@ -32,6 +78,7 @@ async def analyze_evidence(submission: EvidenceSubmission):
             "verification": critiques,
             "governance_status": "PEER_REVIEWED"
         }
+
 
 @app.post("/path", response_model=PathRecommendation)
 async def get_optimal_path(complexity: str, urgency: str):

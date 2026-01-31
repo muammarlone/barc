@@ -1,0 +1,13 @@
+story_id: SPRINT-02-PROGRESS
+events:
+  - id: 1
+    timestamp: "2026-01-30T21:20:00Z"
+    type: SPRINT_START
+    owner: vibe_executor
+    description: "Started Sprint 2 (30% increment). Focus: Sensory Hub & PMO Gate."
+
+  - id: 2
+    timestamp: "2026-01-30T21:22:00Z"
+    type: EXECUTION_START
+    owner: vibe_executor
+    description: "Implementing DMS Connector and Email Ingestor mocks in the backend."
