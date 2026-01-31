@@ -1,0 +1,24 @@
+decision_log:
+  - id: 1
+    decision_id: DECISION-KIW-BACKLOG-001
+    timestamp: "2026-01-30T21:00:00Z"
+    subject: "BARC MVP Backlog Approval"
+    author: Antigravity AI
+    status: APPROVED
+    audit_link: "gados-project/decision/DECISION-KIW-BACKLOG-001.md"
+
+  - id: 2
+    decision_id: DECISION-VERIFY-30
+    timestamp: "2026-01-30T21:18:00Z"
+    subject: "30% Milestone Certification"
+    author: Principal Engineer & KIW Board
+    status: APPROVED
+    audit_link: "gados-project/decision/DECISION-VERIFY-30-SIGNOFF.md"
+
+  - id: 3
+    decision_id: DECISION-SPRINT-2-CLOSE
+    timestamp: "2026-01-30T21:28:00Z"
+    subject: "Sprint 2 Functional Hubs Acceptance"
+    author: Antigravity AI (Vibe Executor)
+    status: APPROVED
+    audit_link: "gados-project/verification/UAT_SPRINT_1_2.md"
