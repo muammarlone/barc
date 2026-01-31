@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from typing import List
 from agents.dsa_framework import NetworkDSA, Finding
 from agents.path_engine import OPME, PathRecommendation, QualityMetrics
+from agents.thinking_agent import ThinkingAgent, Critique
+
 
 
 app = FastAPI(title="BARC Backend - GADOS Powered")
@@ -16,12 +18,21 @@ class EvidenceSubmission(BaseModel):
 async def root():
     return {"status": "BARC Governance Engine Active", "version": "1.0.0"}
 
-@app.post("/analyze", response_model=List[Finding])
+@app.post("/analyze")
 async def analyze_evidence(submission: EvidenceSubmission):
     if submission.domain.lower() == "network":
         dsa = NetworkDSA(domain_id="NW-001", standards_path="standards/network_golden.json")
         findings = await dsa.analyze(submission.content)
-        return findings
+        
+        # Governance Gate: Thinking Agent Critique
+        critiques = ThinkingAgent.critique_findings(findings)
+        
+        return {
+            "findings": findings,
+            "verification": critiques,
+            "governance_status": "PEER_REVIEWED"
+        }
+
 @app.post("/path", response_model=PathRecommendation)
 async def get_optimal_path(complexity: str, urgency: str):
     return OPME.determine_optimal_path(complexity, urgency)
