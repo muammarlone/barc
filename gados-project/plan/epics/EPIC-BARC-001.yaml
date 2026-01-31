@@ -36,10 +36,25 @@ acceptance_criteria:
   - Agent logs simulate the 5-agent separation of powers.
 
 milestones:
-  - M1: Governance Setup (Done)
-  - M2: UI Skeleton (In Progress)
-  - M3: Agent Integration (Planned)
-  - M4: First BPO Assessment Replay (Planned)
+  - M1: Sprint 1 - Foundation (30% DONE)
+  - M2: Sprint 2 - Functional Hubs (30% DONE)
+  - M3: Sprint 3 - Security & AI Integrity (20% PLANNED)
+  - M4: Sprint 4 - Asset Factory & Specialty Lab (20% PLANNED)
+  - M5: Sprint 5 - Holistic Regression & UAT (PLANNED)
+
+sprint_schedule:
+  sprint_3:
+    goals: ["Zero Trust Identity", "Ethical AI Oversight"]
+    stories: ["STORY-BARC-009", "STORY-BARC-010"]
+    increment: 20%
+  sprint_4:
+    goals: ["Specialty Lab", "FS Asset Factory"]
+    stories: ["STORY-BARC-004", "STORY-BARC-011"]
+    increment: 20%
+  sprint_5:
+    goals: ["Holistic Regression", "Reprosense Integration", "User Acceptance Testing"]
+    increment: 0% (Final Polish & Verification)
+
 
 roles:
   strategic_brain: Antigravity AI
