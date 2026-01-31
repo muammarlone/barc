@@ -70,7 +70,27 @@ The **Project Management Office (PMO)** (or enterprise equivalent) acts as the *
 
 ---
 
-## 5. Specialty Lab Interaction
+## 6. Decision Defensibility: The "Why" Layer
+> [!IMPORTANT]
+> **Defensibility** is the ability to prove *why* a decision was made to a skeptical human auditor.
+
+- **Reasoning Traceability**: Every agent finding must include a `reasoning_path` field linking to the specific "Golden Standard" requirement and the evidence snippet.
+- **Historical Comparison**: Agents must cite historical precedent from the **Long-Term Memory (LTM)** when making high-risk recommendations.
+- **Dissent Management**: Any "Critique" from the Thinking Agent that challenges a DSA finding must be preserved as "Constructive Dissent" in the final report, proving that the decision was thoroughly vetted.
+
+---
+
+## 7. Trustable Observability: The "How" Layer
+> [!TIP]
+> **Observability** provides real-time transparency into the agentic "inner monologue."
+
+- **Agentic Health Pulse**: Real-time monitoring of agent confidence levels during an assessment.
+- **Decision Fingerprinting**: Auditability is guaranteed via cryptographic fingerprints (SHA-256) of every state change, stored in the GADOS log.
+- **Live Governance Trace**: The Golden UI must display the "Governance Path" taken by a decision—showing exactly which DRE roles were consulted and who approved the final gate.
+
+---
+
+## 8. Specialty Lab Interaction
 The **Specialty Lab** is the primary incubator for artifacts in the **Internal Review** state. Once an artifact is "Graduated" from the lab, it must pass the **CMP Gate** before it can be shared with the BPO as a formal finding.
 
 ---

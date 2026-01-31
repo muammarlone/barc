@@ -65,15 +65,16 @@ async def bpo_onboarding_workflow(bpo_id: str, domain: str, content: str, tenant
         if domain.lower() == "network":
             dsa = NetworkDSA(domain_id="NW-001", standards_path="standards/network_golden.json")
             # In a real system, we might split the evidence and call multiple DSAs or the same DSA with sub-scopes
-            findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(artifact.content))
+            findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(sanitized_content))
         elif domain.lower() == "cloud":
             from agents.cloud_dsa import CloudDSA
             dsa = CloudDSA(domain_id="CLD-001", standards_path="standards/cloud_golden.json")
-            findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(artifact.content))
+            findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(sanitized_content))
         elif domain.lower() == "security":
             from agents.security_dsa import SecurityDSA
             dsa = SecurityDSA(domain_id="SEC-001", standards_path="standards/security_golden.json")
-            findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(artifact.content))
+            findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(sanitized_content))
+
         else:
             temporal.fail_workflow(wf_id, "DOMAIN_NOT_SUPPORTED")
             return wf_id
@@ -84,10 +85,12 @@ async def bpo_onboarding_workflow(bpo_id: str, domain: str, content: str, tenant
 
         # 3.4. CRITIQUE: Peer review challenges the automated findings
         temporal.set_query(wf_id, "current_step", "PIPELINE_CRITIQUE")
+        thinker = ThinkingAgent()
         critiques = await temporal.run_activity(
             wf_id, "Peer_Review", 
-            lambda: ThinkingAgent.critique_findings(findings)
+            lambda: thinker.critique_findings(findings)
         )
+
         
         # 3.5. VERIFY: check against hard constraints
         temporal.set_query(wf_id, "current_step", "PIPELINE_VERIFY")
@@ -112,8 +115,10 @@ async def bpo_onboarding_workflow(bpo_id: str, domain: str, content: str, tenant
         gate = PMOGate()
         gate_res = await temporal.run_activity(
             wf_id, "Finalize_Gate",
-            lambda: gate.transition_status(artifact.artifact_id, GateStatus.APPROVED, approval_data.get("user_id", "KIW-LEAD"))
+            lambda: gate.transition_status(artifact.id, GateStatus.PMO_CLEARED, approval_data.get("user_id", "KIW-LEAD"))
         )
+
+
         temporal.set_query(wf_id, "progress", 0.90)
 
         # --- Stage 6: Reporting & Synthesis ---
@@ -121,7 +126,7 @@ async def bpo_onboarding_workflow(bpo_id: str, domain: str, content: str, tenant
         csa = CSA()
         report = await temporal.run_activity(
             wf_id, "Executive_Reporting",
-            lambda: csa.synthesize_technical_to_executive(findings, bpo_id)
+            lambda: csa.synthesize_technical_to_executive(findings, bpo_id, critiques=critiques)
         )
 
         # --- Finalize ---
@@ -129,8 +134,9 @@ async def bpo_onboarding_workflow(bpo_id: str, domain: str, content: str, tenant
             "report_id": report.report_id,
             "findings_count": len(findings),
             "governance_status": "KIW_CERTIFIED_DURABLE",
-            "gate_log": gate_res.log_id
+            "gate_log_artifact": gate_res.artifact_id
         })
+
         temporal.set_query(wf_id, "progress", 1.0)
         
         return wf_id

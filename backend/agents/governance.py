@@ -36,7 +36,12 @@ class DRE:
         # Apply Dynamic Overrides
         if risk_score > 0.6 or complexity == "HIGH":
             mapping.accountable = "ENTERPRISE_CISO"
-            mapping.consulted.append("SECURITY_AUDITOR")
+            mapping.consulted.extend([
+                "SECURITY_AUDITOR", 
+                "INFRA_EXPERT", 
+                "DESKTOP_SPECIALIST", 
+                "CLOUD_VERIFIER"
+            ])
             mapping.informed.append("EXECUTIVE_STEERING_COM")
             logger.info(f"Escalated RACI mapping for high-risk assessment: {enterprise_id}")
 

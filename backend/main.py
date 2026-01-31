@@ -9,7 +9,8 @@ from typing import List, Dict, Any
 
 # Core Agents
 from agents.dsa_framework import NetworkDSA
-from agents.path_engine import OPME
+from agents.path_engine import OPME, PathRecommendation, QualityMetrics
+from agents.value_engine import ROIMetrics
 from agents.thinking_agent import ThinkingAgent
 from agents.sensory_hub import SensoryHub
 from agents.csa_engine import CSA
@@ -183,6 +184,11 @@ async def generate_fs_asset(bpo_name: str, findings: List[Dict]):
 @app.get("/metrics", response_model=QualityMetrics, tags=["Intelligence"])
 async def get_metrics(findings_count: int = 10, critical_gaps: int = 2, assessment_days: int = 5):
     return OPME.calculate_metrics(findings_count, critical_gaps, assessment_duration_days=assessment_days)
+
+@app.get("/roi", response_model=ROIMetrics, tags=["Intelligence"])
+async def get_roi_report(duration_h: float = 2.5, findings: int = 15, gaps: int = 3):
+    from agents.value_engine import ValueEngine
+    return ValueEngine.calculate_roi(duration_h, findings, gaps)
 
 @app.get("/governance/raci/{tenant_id}", tags=["Governance"])
 async def get_raci_for_tenant(tenant_id: str, complexity: str = "MEDIUM", risk: float = 0.1):

@@ -44,10 +44,18 @@ def run_phase2_uat():
     logger.info("STEP 5: Checking Final Workflow Completion...")
     time.sleep(2)
     r5 = requests.get(f"{BASE_URL}/temporal/status/{wf_id}")
-    final_status = r5.json()["workflow"]["status"]
-    final_result = r5.json()["workflow"]["result"]
-    logger.info(f"Final Status: {final_status}")
-    logger.info(f"Final Result: {json.dumps(final_result, indent=2)}")
+    wf_data = r5.json()["workflow"]
+    final_status = wf_data.get("status")
+    
+    if final_status == "COMPLETED":
+        final_result = wf_data.get("result")
+        logger.info(f"Final Status: {final_status}")
+        logger.info(f"Final Result: {json.dumps(final_result, indent=2)}")
+    else:
+        logger.error(f"WORKFLOW FAILED or INCOMPLETE. Status: {final_status}")
+        logger.error(f"Error Details: {wf_data.get('error', 'Unknown Error')}")
+        logger.error(f"Full Dump: {json.dumps(r5.json(), indent=2)}")
+
 
 if __name__ == "__main__":
     import json
