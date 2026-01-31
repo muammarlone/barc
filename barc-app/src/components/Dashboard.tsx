@@ -10,22 +10,24 @@ interface Metrics {
 const Dashboard: React.FC = () => {
     const [metrics, setMetrics] = useState<Metrics | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMetrics = async () => {
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8003';
             try {
-                // In a production environment, this would be an environment variable
-                const response = await axios.get('http://localhost:8002/metrics?findings_count=12&critical_gaps=1');
-
+                const response = await axios.get(`${backendUrl}/metrics?findings_count=12&critical_gaps=1`);
                 setMetrics(response.data);
                 setLoading(false);
-            } catch (error) {
-                console.error("Failed to fetch metrics", error);
+            } catch (err) {
+                console.error("Failed to fetch metrics", err);
+                setError("Connectivity issue with Governance Engine.");
                 setLoading(false);
             }
         };
         fetchMetrics();
     }, []);
+
 
     return (
         <main>
@@ -36,7 +38,9 @@ const Dashboard: React.FC = () => {
                 <div>
                     <h1>Compliance Overview</h1>
                     <p style={{ color: 'var(--text-dim)' }}>Monitoring BPO Onboarding: <strong>Global-Connect Inc.</strong></p>
+                    {error && <p style={{ color: 'var(--critical)', marginTop: '0.5rem', fontSize: '0.8rem' }}>⚠️ {error}</p>}
                 </div>
+
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     <div className="status-badge" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', border: '1px solid var(--success)' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
