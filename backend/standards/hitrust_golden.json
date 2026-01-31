@@ -1,0 +1,27 @@
+{
+    "domain": "HITRUST-CSF",
+    "version": "9.4",
+    "requirements": [
+        {
+            "id": "HITRUST-001",
+            "title": "Access Control Management",
+            "category": "Identity",
+            "severity": "CRITICAL",
+            "description": "Formal user registration and de-registration process for all systems."
+        },
+        {
+            "id": "HITRUST-002",
+            "title": "Business Continuity & DR",
+            "category": "Resilience",
+            "severity": "CRITICAL",
+            "description": "Zero-tolerance redundancy with documented RTO < 4 hours."
+        },
+        {
+            "id": "HITRUST-003",
+            "title": "Vulnerability Management",
+            "category": "Operations",
+            "severity": "HIGH",
+            "description": "Monthly external vulnerability scans and remediation within 30 days."
+        }
+    ]
+}

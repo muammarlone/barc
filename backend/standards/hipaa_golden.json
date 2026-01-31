@@ -1,0 +1,27 @@
+{
+    "domain": "HIPAA-Compliance",
+    "version": "1.0",
+    "requirements": [
+        {
+            "id": "HIPAA-001",
+            "title": "Data Encryption at Rest",
+            "category": "Privacy",
+            "severity": "CRITICAL",
+            "description": "All PHI must be encrypted using AES-256 or higher."
+        },
+        {
+            "id": "HIPAA-002",
+            "title": "Transmission Security",
+            "category": "Security",
+            "severity": "CRITICAL",
+            "description": "Encryption of PHI during transit over open networks (TLS 1.3 mandated)."
+        },
+        {
+            "id": "HIPAA-003",
+            "title": "Audit Controls",
+            "category": "Governance",
+            "severity": "HIGH",
+            "description": "Implementation of hardware/software that records and examines activity in systems containing PHI."
+        }
+    ]
+}
