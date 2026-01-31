@@ -17,16 +17,24 @@ Please review the code and artifacts at: [https://github.com/muammarlone/BARC](h
 
 ---
 
-## 3. Stakeholder Sign-Off
+## 3. Master Signing Authority (KIW)
+Scientific and architectural certification is provided exclusively by the **KIW Governance Board**. Technical reviews from the Principal Engineer serve as consultative input to this final authority.
 
-**Status**: [x] APPROVED | [ ] REQUIRES REVISION  
-**Comments**: Technical architecture for DSA framework is sound. Separation of powers via Thinking Agent node is verified. Backend endpoints are responsive. 
-**Signature**: *Principal Engineer (Technical Authority)*  
+---
 
-### 3.2. KIW Board (Governance Auth)
+## 4. Certification & Sign-Off
+
+### 4.1. KIW Board (Ultimate Authority)
 **Status**: [x] APPROVED | [ ] REQUIRES REVISION  
 **Comments**: GADOS compliance is 100%. Audit logs are detailed and fingerprinted. The platform follows the KIW Golden UI standards.
 **Signature**: *KIW Governance Lead*  
+**Date**: 2026-01-30
+
+### 4.2. Principal Engineer (Technical Review / Consultative)
+**Status**: [x] VERIFIED | [ ] REQUIRES REVISION  
+**Comments**: Technical architecture for DSA framework is sound. Separation of powers via Thinking Agent node is verified. Backend endpoints are responsive. 
+**Signature**: *Principal Engineer (Technical Reviewer)*  
+
 
 
 ---
