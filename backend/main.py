@@ -12,6 +12,9 @@ from agents.csa_engine import CSA
 from agents.pmo_gate import PMOGate
 from agents.zta_engine import ZTAEngine
 from agents.ethics_manager import EthicsManager
+from agents.specialty_lab import SpecialtyLab, LabFinding
+from agents.asset_factory import AssetFactory, FSAsset
+
 
 # Schemas
 from schemas.assessments import (
@@ -44,6 +47,9 @@ csa = CSA()
 gate = PMOGate()
 zta = ZTAEngine()
 ethics = EthicsManager()
+lab = SpecialtyLab()
+factory = AssetFactory()
+
 
 async def verify_zta_auth(x_zta_token: str = Header(None)):
     """Zero Trust Dependency to verify token presence and validity."""
@@ -115,7 +121,18 @@ async def approve_artifact(artifact_id: str, status: GateStatus, user_id: str):
 async def get_optimal_path(complexity: str, urgency: str):
     return OPME.determine_optimal_path(complexity, urgency)
 
+@app.post("/lab/dive", response_model=List[LabFinding], tags=["Specialty"])
+async def specialty_deep_dive(domain: str, context: str):
+    logger.info(f"Starting Specialty Lab deep-dive for: {domain}")
+    return lab.run_deep_dive(domain, context)
+
+@app.post("/factory/generate", response_model=FSAsset, tags=["Asset Factory"])
+async def generate_fs_asset(bpo_name: str, findings: List[Dict]):
+    logger.info(f"Generating FS Asset for: {bpo_name}")
+    return factory.generate_fs_spec(bpo_name, findings)
+
 @app.get("/metrics", response_model=QualityMetrics, tags=["Intelligence"])
+
 async def get_metrics(findings_count: int = 10, critical_gaps: int = 2):
     return OPME.calculate_metrics(findings_count, critical_gaps)
 

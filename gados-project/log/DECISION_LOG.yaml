@@ -41,4 +41,13 @@ decision_log:
     status: APPROVED
     audit_link: "gados-project/plan/epics/EPIC-BARC-001.yaml"
 
+  - id: 6
+    decision_id: DECISION-VERIFY-100
+    timestamp: "2026-01-30T22:05:00Z"
+    subject: "100% Product Milestone Certification"
+    authority: "KIW Governance Board"
+    status: APPROVED
+    audit_link: "gados-project/decision/DECISION-VERIFY-100-SIGNOFF.md"
+
+
 
