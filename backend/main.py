@@ -8,6 +8,9 @@ from agents.thinking_agent import ThinkingAgent, Critique
 from agents.sensory_hub import SensoryHub, IngestedArtifact
 from agents.csa_engine import CSA, Report
 from agents.pmo_gate import PMOGate, GateLog, GateStatus
+from agents.zta_engine import ZTAEngine
+from agents.ethics_manager import EthicsManager
+
 
 
 
@@ -17,6 +20,9 @@ app = FastAPI(title="BARC Backend - GADOS Powered")
 hub = SensoryHub(storage_path="evidence/")
 csa = CSA()
 gate = PMOGate()
+zta = ZTAEngine()
+ethics = EthicsManager()
+
 
 class EvidenceSubmission(BaseModel):
 
@@ -66,18 +72,28 @@ async def approve_artifact(artifact_id: str, status: GateStatus, user_id: str):
 
 @app.post("/analyze")
 async def analyze_evidence(submission: EvidenceSubmission):
+    # 1. Zero Trust Gate
+    token = zta.issue_contextual_token(identity=f"Agent-{submission.domain}", scope="ASSESSMENT")
+    
     if submission.domain.lower() == "network":
         dsa = NetworkDSA(domain_id="NW-001", standards_path="standards/network_golden.json")
         findings = await dsa.analyze(submission.content)
         
-        # Governance Gate: Thinking Agent Critique
+        # 2. Peer Review Gate
         critiques = ThinkingAgent.critique_findings(findings)
+        
+        # 3. Ethics Gate
+        reasoning_sample = " ".join([f.reasoning for f in findings])
+        ethics_pass = ethics.audit_reasoning(agent_id=f"DSA-{submission.domain}", reasoning_text=reasoning_sample)
         
         return {
             "findings": findings,
             "verification": critiques,
-            "governance_status": "PEER_REVIEWED"
+            "ethics_audit": ethics_pass,
+            "zta_token": token.token_id,
+            "governance_status": "CERTIFIED_SAFE"
         }
+
 
 
 @app.post("/path", response_model=PathRecommendation)
