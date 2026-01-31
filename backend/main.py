@@ -15,6 +15,10 @@ from agents.ethics_manager import EthicsManager
 from agents.specialty_lab import SpecialtyLab, LabFinding
 from agents.asset_factory import AssetFactory, FSAsset
 from agents.resilience import CircuitBreaker, CircuitBreakerOpenException
+from temporal.workflows import bpo_onboarding_workflow
+from temporal.worker import temporal
+
+
 
 
 
@@ -168,9 +172,26 @@ async def generate_fs_asset(bpo_name: str, findings: List[Dict]):
     return factory.generate_fs_spec(bpo_name, findings)
 
 @app.get("/metrics", response_model=QualityMetrics, tags=["Intelligence"])
-
 async def get_metrics(findings_count: int = 10, critical_gaps: int = 2):
     return OPME.calculate_metrics(findings_count, critical_gaps)
+
+# --- Temporal Phase 2 Endpoints ---
+
+@app.post("/temporal/start", tags=["Temporal Phase 2"])
+async def start_durable_assessment(submission: EvidenceSubmission):
+    """Starts a durable, Temporal-managed assessment workflow."""
+    logger.info(f"Starting Durable Assessment for BPO: {submission.bpo_id}")
+    wf_id = await bpo_onboarding_workflow(submission.bpo_id, submission.domain, submission.content)
+    return {"workflow_id": wf_id, "status": "DURABLE_ORCHESTRATION_STARTED"}
+
+@app.get("/temporal/status/{workflow_id}", tags=["Temporal Phase 2"])
+async def get_workflow_status(workflow_id: str):
+    """Returns the current state and history of a Temporal workflow."""
+    status = temporal.get_status(workflow_id)
+    if not status["workflow"]:
+        raise HTTPException(status_code=404, detail="WORKFLOW_NOT_FOUND")
+    return status
+
 
 if __name__ == "__main__":
     import uvicorn

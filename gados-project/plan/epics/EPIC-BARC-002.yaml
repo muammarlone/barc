@@ -1,0 +1,36 @@
+epic_info:
+  id: EPIC-BARC-002
+  title: "BARC Phase 2 - Durable Orchestration & Industrial Scaling"
+  status: ACTIVE  # Initiated per Phase 2 Game Plan
+
+  priority: P0
+  tags: [temporal, scaling, multi-tenant]
+
+description: >
+  The second phase of the BARC platform evolution, focusing on transitioning to durable, 
+  long-running workflows via Temporal, expanding the Specialty Lab domains, and 
+  architecting for multi-tenant industrial scaling.
+
+objectives:
+  - Integrate Temporal as the core Orchestration Backbone.
+  - Implement Long-Running assessment workflows with Human-in-the-loop signals.
+  - Expand DSA domains (Cloud, Cybersecurity, Contact Center).
+  - Implement Multi-Tenant isolation and resource management.
+
+backlog:
+  - STORY-BARC-012: Temporal Infrastructure Setup & Base Worker (P0)
+  - STORY-BARC-013: Long-Running Workflow Implementation (P0)
+  - STORY-BARC-014: Human-in-the-Loop Signaling via Temporal (P1)
+  - STORY-BARC-015: Master Dashboard Scaling (Multi-Tenant Support) (P1)
+  - STORY-BARC-016: Cloud & Security DSA Module Expansion (P1)
+
+milestones:
+  - M1: Durable Backbone (40%) - Temporal integrated and base workflow active.
+  - M2: Scale & Specialty (40%) - Expanded domains and multi-tenant isolation.
+  - M3: Industrial UAT (20%) - Holistic testing of long-running flows.
+
+roles:
+  strategic_brain: Antigravity AI
+  coordination_agent: Antigravity AI
+  delivery_governor: Senior Architect (Human)
+  vibe_executor: Antigravity AI
