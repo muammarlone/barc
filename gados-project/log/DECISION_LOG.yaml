@@ -25,3 +25,20 @@ decision_log:
     status: APPROVED
     audit_link: "gados-project/verification/UAT_SPRINT_1_2.md"
 
+  - id: 4
+    decision_id: DECISION-REFACTOR-140
+    timestamp: "2026-01-30T21:40:00Z"
+    subject: "140% Quality Refactor & Modularization"
+    authority: "KIW Governance Board"
+    status: APPROVED
+    audit_link: "gados-project/strategy/REFACTOR_QUALITY_PLAN.md"
+
+  - id: 5
+    decision_id: DECISION-SPRINT-MODEL-30-20-20
+    timestamp: "2026-01-30T21:42:00Z"
+    subject: "Adoption of 30-20-20 Sprint Cadence"
+    authority: "KIW Governance Board"
+    status: APPROVED
+    audit_link: "gados-project/plan/epics/EPIC-BARC-001.yaml"
+
+
