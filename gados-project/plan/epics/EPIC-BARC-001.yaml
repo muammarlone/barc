@@ -1,0 +1,48 @@
+epic_info:
+  id: EPIC-BARC-001
+  title: "BARC MVP - Governed BPO Onboarding Foundation"
+  status: ACTIVE  # Approved by KIW (DECISION-KIW-001)
+
+  priority: P0
+  tags: [governance, onboarding, agentic]
+
+description: >
+  Establish the initial governed platform for BARC, including GADOS protocol enforcement, 
+  multi-modal ingestion, and the KIW Golden UI dashboard.
+
+objectives:
+  - Setup GADOS Project Memory and Structure
+  - Implement Core Orchestration Pipeline (DSA -> Thinking -> CSA)
+  - Create Functional Dashboard (Vite/React)
+  - Enforce PMO Communication Gate
+
+backlog:
+  - STORY-BARC-001: Golden UI Setup (Status: IMPLEMENTED)
+  - STORY-BARC-002: Sensory Layer - DMS Connector (Status: PLANNED)
+  - STORY-BARC-003: Sensory Layer - Email Ingestor (Status: PLANNED)
+  - STORY-BARC-004: Specialty Lab & Golden Benchmarking Vault (Status: PLANNED)
+  - STORY-BARC-005: Core Orchestration - Domain Specialist Agent Framework (Status: PLANNED)
+  - STORY-BARC-006: Core Orchestration - Thinking Agent Node (Status: PLANNED)
+  - STORY-BARC-007: Communication Hub - CSA Translation Engine (Status: PLANNED)
+  - STORY-BARC-008: Governance - PMO Distribution Gate (Status: PLANNED)
+  - STORY-BARC-009: Integrity Layer - Zero Trust Identity (Status: PLANNED)
+  - STORY-BARC-010: Integrity Layer - Ethical AI Oversight (Status: PLANNED)
+  - STORY-BARC-011: FS Asset Factory (Status: PLANNED)
+
+
+acceptance_criteria:
+  - All 14 original specs are integrated into GADOS memory.
+  - A functional skeleton of the Vite app is running with the Golden UI CSS.
+  - Agent logs simulate the 5-agent separation of powers.
+
+milestones:
+  - M1: Governance Setup (Done)
+  - M2: UI Skeleton (In Progress)
+  - M3: Agent Integration (Planned)
+  - M4: First BPO Assessment Replay (Planned)
+
+roles:
+  strategic_brain: Antigravity AI
+  coordination_agent: Antigravity AI
+  delivery_governor: Senior Architect (Human)
+  vibe_executor: Antigravity AI (Implementation Mode)

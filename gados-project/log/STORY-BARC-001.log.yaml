@@ -1,0 +1,55 @@
+story_id: STORY-BARC-001
+events:
+  - id: 1
+    timestamp: "2026-01-30T20:44:00Z"
+    type: PLAN
+    owner: coordination_agent
+    description: "Initialized STORY-BARC-001 to track Golden UI platform setup."
+
+  - id: 2
+    timestamp: "2026-01-30T20:44:30Z"
+    type: EXECUTION_START
+    owner: vibe_executor
+    description: "Started scaffolding Vite project 'barc-app'."
+
+  - id: 3
+    timestamp: "2026-01-30T20:45:10Z"
+    type: EXECUTION_UPDATE
+    owner: vibe_executor
+    description: "Vite project scaffolded. Dependencies installed."
+
+  - id: 4
+    timestamp: "2026-01-30T20:47:00Z"
+    type: AUDIT
+    owner: coordination_agent
+    description: "Corrected protocol violation: project structure now governed by GADOS artifacts in /gados-project/."
+
+  - id: 5
+    timestamp: "2026-01-30T20:50:00Z"
+    type: STATUS_UPDATE
+    owner: vibe_executor
+    description: "Ported Golden UI CSS to barc-app/src/index.css."
+
+  - id: 6
+    timestamp: "2026-01-30T20:55:00Z"
+    type: EXECUTION_UPDATE
+    owner: vibe_executor
+    description: "Created Sidebar and Dashboard React components."
+
+  - id: 7
+    timestamp: "2026-01-30T20:58:00Z"
+    type: IMPLEMENTED
+    owner: vibe_executor
+    description: "UI initialization complete. Ready for verification."
+
+  - id: 8
+    timestamp: "2026-01-30T21:00:00Z"
+    type: DECISION_REQUEST
+    owner: coordination_agent
+    description: "Submitted Backlog Analysis (Stories 001-011) to KIW for formal approval (DECISION-KIW-001)."
+
+  - id: 9
+    timestamp: "2026-01-30T21:05:00Z"
+    type: DECISION_APPROVED
+    owner: KIW_GOVERNANCE
+    description: "KIW Board approved the backlog. EPIC-BARC-001 is now ACTIVE."

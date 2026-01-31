@@ -1,0 +1,30 @@
+{
+    "domain_id": "NW-001",
+    "domain_name": "Network & Telecom",
+    "version": "3.1-GOLDEN",
+    "requirements": [
+        {
+            "id": "NW-REQ-01",
+            "title": "Redundant Circuit Verification",
+            "description": "BPO must maintain at least two physically diverse network circuits from different providers.",
+            "severity": "CRITICAL",
+            "category": "Redundancy"
+        },
+        {
+            "id": "NW-REQ-02",
+            "title": "Latency Threshold",
+            "description": "Maximum average latency to enterprise hub must not exceed 150ms.",
+            "severity": "HIGH",
+            "category": "Performance",
+            "threshold": "150ms"
+        },
+        {
+            "id": "NW-REQ-03",
+            "title": "MTU Standard",
+            "description": "Standard MTU size must be set to 1500 bytes unless specified for VDI.",
+            "severity": "MEDIUM",
+            "category": "Configuration",
+            "threshold": "1500"
+        }
+    ]
+}
