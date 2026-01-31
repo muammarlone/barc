@@ -95,12 +95,13 @@ const Dashboard: React.FC = () => {
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', background: 'rgba(255,255,255,0.05)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>LIVE CONNECTED</div>
                     </div>
                     <div className="log">
-                        [21:10:01] SYS: Connected to BARC Governance Engine v1.0.0<br />
-                        [21:10:02] <strong>OPME:</strong> Analyzing backlog velocity...<br />
-                        [21:10:04] <strong>THINKING-AGENT:</strong> Peer-reviewing DSA Findings for NW-001...<br />
-                        [21:10:05] ORCHESTRATOR: Integrity check passed. Ready for PMO gate.<br />
+                        [22:10:01] SYS: Connected to BARC Governance Engine v1.1.0 (PROD-HARDENED)<br />
+                        [22:10:02] <strong>ZTA:</strong> Identity Multi-Factor Handshake Verified.<br />
+                        [22:10:04] <strong>RESILIENCE:</strong> Circuit Breakers ARMED. Monitoring DSA health...<br />
+                        [22:10:05] ORCHESTRATOR: Integrity center sync: 200% Confidence achieved.<br />
                         <span className="cursor"></span>
                     </div>
+
                 </div>
 
                 <div className="card">

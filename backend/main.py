@@ -10,10 +10,12 @@ from agents.thinking_agent import ThinkingAgent
 from agents.sensory_hub import SensoryHub
 from agents.csa_engine import CSA
 from agents.pmo_gate import PMOGate
-from agents.zta_engine import ZTAEngine
+from agents.zta_engine import ZTAEngine, KIWVault
 from agents.ethics_manager import EthicsManager
 from agents.specialty_lab import SpecialtyLab, LabFinding
 from agents.asset_factory import AssetFactory, FSAsset
+from agents.resilience import CircuitBreaker, CircuitBreakerOpenException
+
 
 
 # Schemas
@@ -49,9 +51,13 @@ zta = ZTAEngine()
 ethics = EthicsManager()
 lab = SpecialtyLab()
 factory = AssetFactory()
+dsa_breaker = CircuitBreaker(failure_threshold=2, recovery_timeout=10)
 
+# Chaos State
+chaos_active = False
 
 async def verify_zta_auth(x_zta_token: str = Header(None)):
+
     """Zero Trust Dependency to verify token presence and validity."""
     if not x_zta_token:
         logger.warning("Access denied: Missing ZTA Token")
@@ -79,14 +85,29 @@ async def ingest_email(req: EmailRequest):
 
 @app.post("/analyze", response_model=AssessmentResponse, tags=["Orchestration"])
 async def analyze_evidence(submission: EvidenceSubmission):
-    logger.info(f"Starting Assessment for BPO: {submission.bpo_id} in domain: {submission.domain}")
+    logger.info(f"Starting Governed Assessment for BPO: {submission.bpo_id}")
     
     # 1. Zero Trust Identity Generation
     token = zta.issue_contextual_token(identity=f"Agent-{submission.domain}", scope="ASSESSMENT")
     
     if submission.domain.lower() == "network":
-        dsa = NetworkDSA(domain_id="NW-001", standards_path="standards/network_golden.json")
-        findings = await dsa.analyze(submission.content)
+        @dsa_breaker
+        async def primary_assess():
+            # Chaos Testing Node inside the resilient block
+            if chaos_active:
+                logger.warning("CHAOS MODE ACTIVE: Injecting simulated failure.")
+                raise Exception("SIMULATED_DSA_FAILURE")
+                
+            dsa = NetworkDSA(domain_id="NW-001", standards_path="standards/network_golden.json")
+            return await dsa.analyze(submission.content)
+
+            
+        try:
+            findings = await primary_assess()
+        except CircuitBreakerOpenException:
+            raise HTTPException(status_code=503, detail="SERVICE_UNAVAILABLE_RESILIENCE_GATE")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
         
         # 2. Peer Review (Thinking Agent)
         critiques = ThinkingAgent.critique_findings(findings)
@@ -95,17 +116,32 @@ async def analyze_evidence(submission: EvidenceSubmission):
         reasoning_sample = " ".join([f.reasoning for f in findings])
         ethics_pass = ethics.audit_reasoning(agent_id=f"DSA-{submission.domain}", reasoning_text=reasoning_sample)
         
-        logger.info(f"Assessment completed with status: CERTIFIED_SAFE")
         return {
             "findings": findings,
             "verification": [c.dict() for c in critiques],
             "ethics_audit": ethics_pass,
             "zta_token": token.token_id,
-            "governance_status": "CERTIFIED_SAFE"
+            "governance_status": "CERTIFIED_HARDENED"
         }
     else:
-        logger.error(f"Domain Specialist not found for: {submission.domain}")
         raise HTTPException(status_code=400, detail="DOMAIN_SPECIALIST_NOT_AVAILABLE")
+
+@app.post("/zta/mfa", tags=["Security"])
+async def verify_mfa(token_id: str, code: str):
+    """MFA Challenge for administrative actions."""
+    success = zta.challenge_mfa(token_id, code)
+    if not success:
+        raise HTTPException(status_code=403, detail="MFA_VERIFICATION_FAILED")
+    return {"status": "MFA_AUDITED_SUCCESS"}
+
+@app.post("/chaos/toggle", tags=["Chaos Engineering"])
+async def toggle_chaos(active: bool):
+    global chaos_active
+    chaos_active = active
+    msg = "ENABLED" if active else "DISABLED"
+    logger.critical(f"Chaos Monkey has been {msg}")
+    return {"status": f"CHAOS_{msg}"}
+
 
 @app.post("/report", response_model=Report, tags=["Reporting"])
 async def generate_report(req: ReportRequest):
