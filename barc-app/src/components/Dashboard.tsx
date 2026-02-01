@@ -14,24 +14,32 @@ interface SecurityKPIs {
     compliance_score: number;
 }
 
+interface ROIMetrics {
+    hours_saved: number;
+    cost_reduction_usd: number;
+    productivity_gain_percent: number;
+    accuracy_lift_percent: number;
+}
+
 const Dashboard: React.FC = () => {
     const [metrics, setMetrics] = useState<Metrics | null>(null);
-    const [security, setSecurity] = useState<SecurityKPIs | null>(null);
+    const [roi, setRoi] = useState<ROIMetrics | null>(null);
     const [workflowStatus, setWorkflowStatus] = useState<string>("IDLE");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [regions] = useState({ aws: "HEALTHY", azure: "HEALTHY" });
 
     useEffect(() => {
         const fetchAll = async () => {
             const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8003';
             try {
-                const [mRes, sRes] = await Promise.all([
-                    axios.get(`${backendUrl}/metrics?findings_count=12&critical_gaps=1`),
-                    axios.get(`${backendUrl}/security/kpis`)
+                const [mRes, rRes] = await Promise.all([
+                    axios.get(`${backendUrl}/metrics?findings_count=15&critical_gaps=1`),
+                    axios.get(`${backendUrl}/roi?duration_h=2.5&findings=15&gaps=3`)
                 ]);
                 setMetrics(mRes.data);
-                setSecurity(sRes.data);
-                setWorkflowStatus("PIPELINE_EXPLORE"); // Simulated current live status
+                setRoi(rRes.data);
+                setWorkflowStatus("PIPELINE_VETTING");
                 setLoading(false);
                 setError(null);
             } catch (err) {
@@ -67,27 +75,30 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="grid">
-                <div className="card">
-                    <h3>Technical Trust</h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div className="gauge-container">
-                            <svg className="gauge-svg" width="80" height="80">
-                                <circle className="gauge-bg" cx="40" cy="40" r="35"></circle>
-                                <circle className="gauge-fill" cx="40" cy="40" r="35" style={{ strokeDashoffset: metrics ? 251 * (1 - metrics.quality_score / 100) : 251 }}></circle>
-                            </svg>
-                            <div className="gauge-text">{loading ? "..." : `${metrics?.quality_score}%`}</div>
-                        </div>
-                        <div>
-                            <div className="sub">Six Sigma</div>
-                            <div style={{ fontWeight: 700, color: 'var(--success)' }}>T2</div>
-                        </div>
+                <div className="card" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)' }}>
+                    <h3>Productivity Pulse</h3>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                        <div className="value" style={{ color: 'var(--success)', fontSize: '2rem' }}>{roi?.hours_saved || "0"}h</div>
+                        <div className="sub">Human Hours Saved</div>
+                    </div>
+                    <div className="peak-badge" style={{ marginTop: '0.5rem', background: 'rgba(57, 137, 255, 0.1)', color: '#3989ff' }}>
+                        ROI: ${roi?.cost_reduction_usd?.toLocaleString()} | +{roi?.productivity_gain_percent}%
                     </div>
                 </div>
 
-                <div className="card" style={{ borderLeft: '4px solid #f59e0b' }}>
-                    <h3>Optimal Path</h3>
-                    <div className="value" style={{ fontSize: '1.2rem', color: '#f59e0b' }}>STANDARD_DEEP_DIVE</div>
-                    <div className="sub">Est: 21 Days</div>
+                <div className="card" style={{ borderLeft: '4px solid #3b82f6' }}>
+                    <h3>Global Failover Logic</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.8rem' }}>AWS (US-East-1)</span>
+                            <div className={`status-dot ${regions.aws === 'HEALTHY' ? 'active' : 'error'}`}></div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.8rem' }}>Azure (East-US-2)</span>
+                            <div className={`status-dot ${regions.azure === 'HEALTHY' ? 'active' : 'warn'}`}></div>
+                        </div>
+                        <div className="sub" style={{ fontSize: '0.7rem' }}>Zero-Tolerance Sync: <span style={{ color: 'var(--success)' }}>ACTIVE</span></div>
+                    </div>
                 </div>
 
                 <div className="card" style={{ borderRight: '4px solid var(--success)' }}>
@@ -97,14 +108,14 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 <div className="card" style={{ borderTop: '2px solid #a855f7' }}>
-                    <h3>Security KPIs</h3>
+                    <h3>AI-Human Consensus</h3>
                     <div style={{ marginTop: '0.5rem' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>MTTD / MTTR</div>
-                        <div className="value" style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>
-                            {loading ? "..." : `${security?.mttd_sec}s / ${security?.mttr_sec}s`}
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Vetting Accuracy</div>
+                        <div className="value" style={{ fontSize: '1.2rem', color: '#10b981' }}>
+                            {roi ? `${roi.accuracy_lift_percent}% Lift` : "..."}
                         </div>
-                        <div className="peak-badge" style={{ marginTop: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)' }}>
-                            Score: {security?.compliance_score ? security.compliance_score * 100 : 0}%
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '0.3rem' }}>
+                            Target consensus: 100%
                         </div>
                     </div>
                 </div>
@@ -119,7 +130,9 @@ const Dashboard: React.FC = () => {
                     <div className="wf-arrow">→</div>
                     <div className="wf-node complete">Ingestion</div>
                     <div className="wf-arrow">→</div>
-                    <div className={`wf-node ${workflowStatus === 'PIPELINE_EXPLORE' ? 'active' : 'waiting'}`}>DSA-Explore</div>
+                    <div className="wf-node complete">Explore</div>
+                    <div className="wf-arrow">→</div>
+                    <div className={`wf-node ${workflowStatus === 'PIPELINE_VETTING' ? 'active' : 'waiting'}`}>Interactive Vetting</div>
                     <div className="wf-arrow">→</div>
                     <div className="wf-node waiting">PMO-Gate</div>
                 </div>

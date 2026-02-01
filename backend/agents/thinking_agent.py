@@ -8,6 +8,8 @@ class Critique(BaseModel):
     status: str # "VERIFIED" or "CHALLENGED"
     reasoning: str
     confidence_score: float
+    consensus_score: float = 1.0 # 1.0 = AI only, <1.0 = Human-Agent debate
+    human_override: Optional[bool] = None # User can set to True/False
     memory_trace: Optional[str] = None # Link to LTM context
 
 class ThinkingAgent:
@@ -40,4 +42,22 @@ class ThinkingAgent:
                 confidence_score=0.98 if trace else 0.85,
                 memory_trace=trace
             ))
+    def apply_human_vetting(self, critiques: List[Critique], human_feedback: Dict[str, bool]) -> List[Critique]:
+        """
+        Applies human overrides to AI critiques.
+        Updates consensus score to reflect AI-Human alignment.
+        """
+        for c in critiques:
+            if c.requirement_id in human_feedback:
+                override_val = human_feedback[c.requirement_id]
+                c.human_override = override_val
+                # If human contradicts AI, lower the consensus score
+                ai_sentiment = (c.status == "VERIFIED")
+                if ai_sentiment != override_val:
+                    c.consensus_score = 0.5
+                    c.status = "VERIFIED" if override_val else "CHALLENGED"
+                    c.reasoning += f" [HUMAN_OVERRIDE]: Consensus dropped to 50% due to professional disagreement."
+                else:
+                    c.consensus_score = 1.0
+                    c.reasoning += " [HUMAN_CONSENSUS]: Professional agreement reached."
         return critiques

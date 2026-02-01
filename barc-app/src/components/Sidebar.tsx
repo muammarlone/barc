@@ -7,12 +7,22 @@ const Sidebar: React.FC = () => {
                 <div className="logo-icon">B</div>
                 BARC / KIW
             </div>
+
+            <div className="persona-box">
+                <div style={{ fontSize: '0.6rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '1px' }}>Active Persona</div>
+                <select className="persona-select">
+                    <option>Enterprise Architect</option>
+                    <option>Compliance Officer</option>
+                    <option>Network Specialist</option>
+                    <option>Cloud Ops Manager</option>
+                </select>
+            </div>
             <nav>
                 <ul>
                     <li className="active">Infrastructure Dashboard</li>
                     <li>Domain Assessments</li>
                     <li>
-                        Specialty Lab 
+                        Specialty Lab
                         <span style={{ fontSize: '0.6rem', background: 'var(--accent)', color: 'var(--bg-deep)', padding: '0.1rem 0.3rem', borderRadius: '4px', marginLeft: '5px' }}>
                             PRIVATE
                         </span>
@@ -21,14 +31,14 @@ const Sidebar: React.FC = () => {
                     <li>Email Ingestion Hub</li>
                     <li>DMS Explorer</li>
                     <li>
-                        Workflow Orchestrator 
+                        Workflow Orchestrator
                         <span style={{ fontSize: '0.6rem', background: 'var(--success)', color: 'var(--bg-deep)', padding: '0.1rem 0.3rem', borderRadius: '4px', marginLeft: '5px' }}>
                             LIVE
                         </span>
                     </li>
                     <li>Lifecycle & Change Hub</li>
                     <li>
-                        FS Asset Factory 
+                        FS Asset Factory
                         <span style={{ fontSize: '0.6rem', background: 'var(--accent)', color: 'var(--bg-deep)', padding: '0.1rem 0.3rem', borderRadius: '4px', marginLeft: '5px' }}>
                             M-MODAL
                         </span>

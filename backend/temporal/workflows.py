@@ -74,7 +74,10 @@ async def bpo_onboarding_workflow(bpo_id: str, domain: str, content: str, tenant
             from agents.security_dsa import SecurityDSA
             dsa = SecurityDSA(domain_id="SEC-001", standards_path="standards/security_golden.json")
             findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(sanitized_content))
-
+        elif domain.lower() == "modernization":
+            from agents.modernization_dsa import ModernizationDSA
+            dsa = ModernizationDSA(domain_id="MOD-001", standards_path="standards/genesys_golden.json")
+            findings = await temporal.run_activity(wf_id, "DSA_Explore_Domain", lambda: dsa.analyze(sanitized_content))
         else:
             temporal.fail_workflow(wf_id, "DOMAIN_NOT_SUPPORTED")
             return wf_id
@@ -90,6 +93,15 @@ async def bpo_onboarding_workflow(bpo_id: str, domain: str, content: str, tenant
             wf_id, "Peer_Review", 
             lambda: thinker.critique_findings(findings)
         )
+
+        # 3.4.1. INTERACTIVE VETTING: Human-in-the-loop consensus hub
+        temporal.set_query(wf_id, "current_step", "PIPELINE_VETTING")
+        if any(f.status == "FAIL" for f in findings) or any(c.status == "CHALLENGED" for c in critiques):
+            vetting_feedback = await temporal.wait_for_signal(wf_id, "HUMAN_VETTING_DECISION", timeout=3600)
+            critiques = await temporal.run_activity(
+                wf_id, "Apply_Human_Vetting",
+                lambda: thinker.apply_human_vetting(critiques, vetting_feedback.get("overrides", {}))
+            )
 
         
         # 3.5. VERIFY: check against hard constraints

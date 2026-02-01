@@ -11,6 +11,8 @@ class Finding(BaseModel):
     reasoning: str
     severity: str
     hard_constraint: bool = False # If True, failure blocks the gate automatically
+    suggested_fix: Optional[str] = None # AI-suggested fix for failures
+    draft_content: Optional[str] = None # AI-generated document completion
 
 class BaseDSA(ABC):
     """
@@ -32,6 +34,13 @@ class BaseDSA(ABC):
         Returns a list of granular Findings.
         """
         pass
+
+    def co_pilot_suggest(self, requirement_id: str, context: str) -> str:
+        """
+        Generates a suggested fix or document completion for a missing/failed requirement.
+        """
+        # Logic to be implemented by specific DSAs
+        return f"Co-pilot recommendation for {requirement_id} based on organizational standards."
 
     def get_requirements(self) -> List[Dict]:
         """Returns the list of requirements from the loaded domain standard."""

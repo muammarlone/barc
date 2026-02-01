@@ -1,0 +1,27 @@
+{
+    "domain": "Genesys Modernization",
+    "version": "1.0",
+    "requirements": [
+        {
+            "id": "GEN-MOD-001",
+            "title": "Legacy SIP-to-WebRTC Mapping",
+            "category": "Voice",
+            "severity": "CRITICAL",
+            "description": "All legacy SIP trunks must be mapped to Genesys WebRTC BYOC-P standards."
+        },
+        {
+            "id": "GEN-MOD-002",
+            "title": "Global Edge Redundancy",
+            "category": "Resilience",
+            "severity": "CRITICAL",
+            "description": "Must implement Active-Active Global Edge nodes in at least two separate cloud regions (AWS/Azure)."
+        },
+        {
+            "id": "GEN-MOD-003",
+            "title": "Station ID Validation",
+            "category": "Endpoint",
+            "severity": "MEDIUM",
+            "description": "Station IDs must be verified against the corporate directory and tokenized for PII protection."
+        }
+    ]
+}
