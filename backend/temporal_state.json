@@ -236,6 +236,40 @@
         "gate_log_artifact": "TRC-F74B2C80"
       },
       "end_time": "2026-01-31T18:24:49.212060"
+    },
+    "WF-42CBE0": {
+      "name": "BPO_Onboarding_Workflow",
+      "status": "COMPLETED",
+      "start_time": "2026-01-31T18:30:52.371220",
+      "input": {
+        "bpo_id": "UK-BPO-001",
+        "domain": "network"
+      },
+      "tenant": "KIW-UK",
+      "current_step": "Executive_Reporting",
+      "queries": {
+        "progress": 1.0,
+        "raci_matrix": {
+          "responsible": "BPO_TECH_LEAD",
+          "accountable": "SENIOR_ARCHITECT",
+          "consulted": [
+            "DSA_DOMAIN",
+            "PEER_REVIEWER"
+          ],
+          "informed": [
+            "PROJECT_PMO"
+          ],
+          "gate_owner": "PMO"
+        },
+        "current_step": "PIPELINE_VERIFY"
+      },
+      "result": {
+        "report_id": "EXEC-A8059E",
+        "findings_count": 3,
+        "governance_status": "KIW_CERTIFIED_DURABLE",
+        "gate_log_artifact": "TRC-18C3ABA8"
+      },
+      "end_time": "2026-01-31T18:30:59.586079"
     }
   },
   "workflow_history": {
@@ -578,6 +612,62 @@
         "timestamp": "2026-01-31T18:24:49.208703",
         "result_summary": "report_id='EXEC-CB0683' target_audience='Executive Leadership (PMO)' summary='Architectural review f"
       }
+    ],
+    "WF-42CBE0": [
+      {
+        "activity": "Define_RACI",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:52.378971",
+        "result_summary": "responsible='BPO_TECH_LEAD' accountable='SENIOR_ARCHITECT' consulted=['DSA_DOMAIN', 'PEER_REVIEWER']"
+      },
+      {
+        "activity": "Security_Guard_Filter",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:52.386927",
+        "result_summary": "Deep assessment required."
+      },
+      {
+        "activity": "ZTA_Handshake",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:52.395068",
+        "result_summary": "token_id='ZTA-A431212317D2B396' identity='Agent-network' scope='ASSESSMENT' expires_at='2026-01-31T1"
+      },
+      {
+        "activity": "Hub_Ingestion",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:52.402657",
+        "result_summary": "id='TRC-18C3ABA8' source='TEMPORAL_WF' filename='UK-BPO-001_evidence.txt' category='DMS_SYNC' timest"
+      },
+      {
+        "activity": "DSA_Explore_Domain",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:52.417755",
+        "result_summary": "[Finding(requirement_id='NW-REQ-01', sub_task='Redundancy', status='PASS', evidence_snippet='Simulat"
+      },
+      {
+        "activity": "Peer_Review",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:52.435764",
+        "result_summary": "[Critique(requirement_id='NW-REQ-01', status='VERIFIED', reasoning='Thinking Agent peer-reviewed NW-"
+      },
+      {
+        "activity": "Ethics_Audit",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:52.445184",
+        "result_summary": "bias_detected=False neutrality_score=0.99 transparency_trace='Audit of DSA-network: Pass. Reasoning "
+      },
+      {
+        "activity": "Finalize_Gate",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:59.574308",
+        "result_summary": "artifact_id='TRC-18C3ABA8' current_status=<GateStatus.PMO_CLEARED: 'PMO_CLEARED'> updated_by='KIW-AR"
+      },
+      {
+        "activity": "Executive_Reporting",
+        "status": "COMPLETED",
+        "timestamp": "2026-01-31T18:30:59.582658",
+        "result_summary": "report_id='EXEC-A8059E' target_audience='Executive Leadership (PMO)' summary='Architectural review f"
+      }
     ]
   },
   "tenants": {
@@ -589,7 +679,8 @@
       "WF-FA287B",
       "WF-76D4CB",
       "WF-4475A8",
-      "WF-51416D"
+      "WF-51416D",
+      "WF-42CBE0"
     ]
   }
 }
