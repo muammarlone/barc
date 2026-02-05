@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pydantic import BaseModel
 
 class Finding(BaseModel):

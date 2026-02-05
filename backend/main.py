@@ -20,6 +20,7 @@ from agents.ethics_manager import EthicsManager
 from agents.specialty_lab import SpecialtyLab, LabFinding
 from agents.asset_factory import AssetFactory, FSAsset
 from agents.resilience import CircuitBreaker, CircuitBreakerOpenException
+from agents.v2l_parser import V2LParser
 from temporal.workflows import bpo_onboarding_workflow
 from temporal.worker import temporal
 
@@ -33,9 +34,10 @@ from schemas.assessments import (
     ReportRequest, AssessmentResponse, IngestedArtifact, 
     Report, GateLog, GateStatus, PathRecommendation, QualityMetrics
 )
+from schemas.gados import GADOSGraph
 
 # Logging Setup
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("BARC-Governance")
 
 app = FastAPI(
@@ -64,6 +66,7 @@ factory = AssetFactory()
 dsa_breaker = CircuitBreaker(failure_threshold=2, recovery_timeout=10)
 security_tracker = SecurityEventTracker()
 security = AISecurityGuard(tracker=security_tracker)
+v2l = V2LParser(kiw_id="KIW-V2L-CORE")
 
 # Chaos State
 chaos_active = False
@@ -137,6 +140,42 @@ async def analyze_evidence(submission: EvidenceSubmission):
         }
     else:
         raise HTTPException(status_code=400, detail="DOMAIN_SPECIALIST_NOT_AVAILABLE")
+
+@app.post("/analyze/v2l", tags=["Orchestration"])
+async def analyze_v2l(raw_input: Dict[str, Any]):
+    """
+    KIW-Certified Vision-to-Logic (V2L) Parsing endpoint.
+    Translates visual primitives into formalized GADOS architectural graphs.
+    """
+    logger.info("Initiating V2L Parser pipeline...")
+    try:
+        # 1. Decompose & Explore
+        primitives = v2l.decompose(raw_input)
+        graph = v2l.explore(primitives)
+        
+        # 2. Critique
+        issues = v2l.critique(graph)
+        if issues:
+            logger.warning(f"V2L Critique identified potential gaps: {issues}")
+        
+        # 3. Verify against Network Standards
+        import json
+        with open("standards/network_golden.json", "r") as f:
+            standards = json.load(f)
+        
+        verification = v2l.verify(graph, standards)
+        
+        return {
+            "graph": graph.model_dump(),
+            "verification": verification,
+            "critique_issues": issues,
+            "governance_status": "V2L_CERTIFIED" if verification["status"] == "CERTIFIED" else "NON_COMPLIANT"
+        }
+    except Exception as e:
+        import traceback
+        logger.error(f"V2L Pipeline Error: {e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/zta/mfa", tags=["Security"])
 async def verify_mfa(token_id: str, code: str):

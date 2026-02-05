@@ -8,7 +8,9 @@
 ---
 
 ## 1. Executive Vision: The "Black Box" to "Digital Twin"
-BARC has evolved from a Durable Orchestration Ecosystem into a **Digital Twin Environment**. We are moving beyond compliance auditing into **Automated Solution Engineering**.
+BARC has evolved from a Durable Orchestration Ecosystem into a **Digital Twin Environment**. We are moving beyond compliance auditing into **Automated Solution Engineering**. 
+- **Hierarchical Truth**: Enterprise Benchmarks are the primary evaluator; provider data is secondary.
+- **Binary Certification**: Assessments are strictly **Yes/No**, requiring **Strict Business Exceptions** for any non-compliant approval bypass.
 
 ---
 
